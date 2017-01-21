@@ -1,33 +1,75 @@
 ---
 layout: default
 ---
+<script>
+function switchDisplay(display) {
+  var lists = document.querySelectorAll('.sortedList'),
+  i = 0,
+  l = lists.length;
 
+  for (i; i < l; i++) {
+    lists[i].style.display = 'none';
+  }
+
+  document.getElementById(display).style.display = "block";
+
+  return false;
+}
+</script
 <div class="home">
   <h1 class="page-heading">All Creatures</h1>
   <p id="creatureSearch">Search by name: <input type="search" id="jetsSearch"></p>
-  <p id="sortBy">Sort By: <a href="/">CR</a> <a href="/byname">name</a></p>
-  <dl class="tag-list">
-    <dt>Challenge Rating:</dt>
+  <p id="sortBy">Sort By: <a onclick="switchDisplay('byName')">Name</a> <a onclick="switchDisplay('byCR')">CR</a></p>
+  <div id="byCR" class="sortedList" stlye="display:block">
+    <dl class="tag-list">
+      <dt>Challenge Rating:</dt>
+      {% for level in site.data.levels %}
+      <dd>
+        <a href="#{{level.tag}}">{{level.name}}</a>
+      </dd>
+      {% endfor %}
+    </dl>
     {% for level in site.data.levels %}
-    <dd>
-      <a href="#{{level.tag}}">{{level.name}}</a>
-    </dd>
-    {% endfor %}
-  </dl>
-  {% for level in site.data.levels %}
     <a id="{{level.tag}}"></a>
-    <h2 class="post-list-head jetsHide">{{level.title}}</h2>
+    <h2 class="post-list-head">{{level.title}}</h2>
     <ul class="post-list jetsContent">
-      {% assign post_list = site.tags.[{{level.tag}}] | sort: 'title' %}
-      {% for post in post_list %}
-        <li>
-            <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-        </li>
+      {% assign post_list = site.tags.[{{level.tag}}] | sort: 'title' %} {% for post in post_list %}
+      <li>
+        <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+      </li>
       {% endfor %}
     </ul>
-    <a class="post-meta jetsHide" href="#top">Back to top &#8593;</a>
-  {% endfor %}
-
-  <p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | prepend: site.baseurl }}">via RSS</a></p>
+    <a class="post-meta" href="#top">Back to top &#8593;</a> {% endfor %}
+  </div>
+  <div id="byName" class="sortedList" style="display:none">
+    {% assign letters = "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z" | split: ' ' %}
+    <dl class="tag-list">
+      <dt>Letter:</dt>
+      {% for l in letters %}
+      <dd>
+        <a href="#{{l}}">{{l}}</a>
+      </dd>
+      {% endfor %}
+    </dl>
+    {% assign post_list = site.posts | sort: 'title' %} {% assign cur_letter = post_list.first.title | slice: 0 %}
+    <a id="{{cur_letter}}"></a>
+    <h2 class="post-list-head">{{cur_letter}}</h2>
+    <ul class="post-list jetsContent">
+      {% for post in post_list %} {% assign f_letter = post.title | slice: 0 %} {% if f_letter != cur_letter %} {% assign cur_letter
+      = f_letter %}
+    </ul>
+    <a class="post-meta" href="#top">Back to top &#8593;</a>
+    <a id="{{cur_letter}}"></a>
+    <h2 class="post-list-head">{{cur_letter}}</h2>
+    <ul class="post-list jetsContent">
+      {% endif %}
+      <li>
+        <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+    <a class="post-meta" href="#top">Back to top &#8593;</a>
+  </div>
+  <p class="rss-subscribe">subscribe <a href="{{ " /feed.xml " | prepend: site.baseurl }}">via RSS</a></p>
 
 </div>
